@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -67,6 +68,26 @@ class User extends Authenticatable
     public function events(): HasMany
     {
         return $this->hasMany(Event::class);
+    }
+
+    public function eventsOfTheMonth(Carbon $date): HasMany
+    {
+        return $this->eventsBetweenDate(
+
+                $date->startOfMonth(),
+                $date->endOfMonth()
+        );
+    }
+
+
+    public function eventsBetweenDate(Carbon $startDate, Carbon $endDate): HasMany
+    {
+        return $this->events()->whereBetween('start',
+            [
+                $startDate,
+                $endDate
+            ]
+        );
     }
 
 
